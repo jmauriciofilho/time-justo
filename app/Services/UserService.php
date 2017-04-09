@@ -8,8 +8,6 @@
 
 namespace App\Services;
 
-
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -72,6 +70,19 @@ class UserService
 		}else{
 			return "Erro ao remover usuário!";
 		}
+	}
+
+	public function setConfirmParticipation(Request $request)
+	{
+		$guestPlayer = DB::table('guest_players')->whereColumn([
+			['game_id', $request->get('game_id')],
+			['user_id', $request->get('user_id')]
+		])->get();
+
+		$guestPlayer->confirmParticipation = $request->get('confirmParticipation');
+
+		return "Participação alterada no evento!";
+
 	}
 
 	public function allUsers()
