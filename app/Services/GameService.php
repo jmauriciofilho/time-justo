@@ -6,7 +6,7 @@
  * Time: 00:03
  */
 
-namespace app\Services;
+namespace App\Services;
 
 
 use App\Models\Game;
