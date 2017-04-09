@@ -12,6 +12,8 @@ namespace App\Services;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UserService
@@ -21,6 +23,20 @@ class UserService
 	function __construct(User $user)
 	{
 		$this->user = $user;
+	}
+
+	public function loginApp(Request $request)
+	{
+		$has = Auth::attempt(['email' => $request->get('email'),
+			'password' => $request->get('password')]);
+		if ($has) {
+			$user = User::all()->where('email', '=', $request->get('email'))->first();
+			$json = new Collection();
+			$json->put('user', $user->toArray());
+			$json->put('role', $user->roles->toArray());
+			return json_encode($json->toArray());
+		}
+		return "Usuário não encontrado!";
 	}
 
 	public function create(Request $request)
