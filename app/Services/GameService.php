@@ -28,7 +28,7 @@ class GameService
 		if ($createGame){
 			return "Evento criado com sucesso!";
 		}else{
-			return "Erro ao criar evento!";
+			return "Erro ao criar evento! ";
 		}
 	}
 
