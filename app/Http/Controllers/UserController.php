@@ -34,6 +34,16 @@ class UserController extends Controller
     	return $this->userService->delete($request);
     }
 
+	public function setOverall(Request $request)
+	{
+		return $this->userService->setOverall($request);
+	}
+
+	public function setGoalsScored(Request $request)
+	{
+		return $this->userService->setGoalsScored($request);
+	}
+
 	public function invitePlayers(Request $request)
 	{
 		return $this->userService->invitePlayers($request);

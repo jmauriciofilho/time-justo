@@ -9,6 +9,7 @@
 namespace App\Services;
 
 use App\Models\Game;
+use App\Models\GuestPlayers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -73,6 +74,28 @@ class UserService
 		}
 	}
 
+	public function setOverall(Request $request)
+	{
+		$user = User::find($request->get('id'));
+
+		$user->overall = $request->get('overall');
+
+		$user->save();
+
+		return "Média registrada!";
+	}
+
+	public function setGoalsScored(Request $request)
+	{
+		$user = User::find($request->get('id'));
+
+		$user->goalsScored = $request->get('goalsScored');
+
+		$user->save();
+
+		return "Numero de goals registrado!";
+	}
+
 	public function invitePlayers(Request $request)
 	{
 		$users = $request->get('user_id');
@@ -82,18 +105,6 @@ class UserService
 		$game->users()->attach($users);
 
 		return "Usuários convidados com sucesso!";
-	}
-
-	public function setConfirmParticipation(Request $request)
-	{
-		$guestPlayer = DB::table('guest_players')->where([
-			['game_id', $request->get('game_id')],
-			['user_id', $request->get('user_id')]
-		])->first();
-
-		$guestPlayer->confirmParticipation = $request->get('confirmParticipation');
-		//dd($guestPlayer);
-		$guestPlayer->save();
 	}
 
 	public function allUsers()
