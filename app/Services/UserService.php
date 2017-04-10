@@ -8,6 +8,7 @@
 
 namespace App\Services;
 
+use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -72,17 +73,27 @@ class UserService
 		}
 	}
 
+	public function invitePlayers(Request $request)
+	{
+		$users = $request->get('user_id');
+
+		$game = Game::find($request->get('game_id'));
+
+		$game->users()->attach($users);
+
+		return "Usuários convidados com sucesso!";
+	}
+
 	public function setConfirmParticipation(Request $request)
 	{
-		$guestPlayer = DB::table('guest_players')->whereColumn([
+		$guestPlayer = DB::table('guest_players')->where([
 			['game_id', $request->get('game_id')],
 			['user_id', $request->get('user_id')]
-		])->get();
+		])->first();
 
 		$guestPlayer->confirmParticipation = $request->get('confirmParticipation');
-
-		return "Participação alterada no evento!";
-
+		//dd($guestPlayer);
+		$guestPlayer->save();
 	}
 
 	public function allUsers()

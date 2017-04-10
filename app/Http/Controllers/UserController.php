@@ -34,6 +34,11 @@ class UserController extends Controller
     	return $this->userService->delete($request);
     }
 
+	public function invitePlayers(Request $request)
+	{
+		return $this->userService->invitePlayers($request);
+	}
+
 	public function setConfirmParticipation(Request $request)
 	{
 		return $this->userService->setConfirmParticipation($request);
