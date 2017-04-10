@@ -6,7 +6,7 @@
  * Time: 10:52
  */
 
-namespace app\Services;
+namespace App\Services;
 
 
 use App\Models\GuestPlayers;

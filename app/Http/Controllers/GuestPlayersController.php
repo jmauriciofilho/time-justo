@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use app\Services\GuestPlayersService;
+use App\Services\GuestPlayersService;
 use Illuminate\Http\Request;
 
 class GuestPlayersController extends Controller
