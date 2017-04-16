@@ -9,14 +9,14 @@
 namespace App\Services;
 
 
-use App\Models\Game;
+use App\Models\Event;
 use Illuminate\Http\Request;
 
 class GameService
 {
 	private $game;
 
-	function __construct(Game $game)
+	function __construct(Event $game)
 	{
 		$this->game = $game;
 	}
@@ -56,7 +56,7 @@ class GameService
 
 	public function allGames()
 	{
-		$games = Game::all();
+		$games = Event::all();
 
 		return json_encode($games);
 	}

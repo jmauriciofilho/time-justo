@@ -32,8 +32,18 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function calculateOverall($nota, $somaNotas, $couter)
+    {
+		return ($nota + $somaNotas)/$couter;
+    }
+
     public function roles()
     {
     	return $this->belongsToMany(Role::class, 'users_roles', 'user_id', 'role_id');
+    }
+
+    public function users()
+    {
+    	return $this->belongsToMany(User::class, 'friends', 'user_id', 'user_friend_id');
     }
 }

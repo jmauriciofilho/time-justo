@@ -8,7 +8,7 @@
 
 namespace App\Services;
 
-use App\Models\Game;
+use App\Models\Event;
 use App\Models\GuestPlayers;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -100,7 +100,7 @@ class UserService
 	{
 		$users = $request->get('user_id');
 
-		$game = Game::find($request->get('game_id'));
+		$game = Event::find($request->get('game_id'));
 
 		$game->users()->attach($users);
 
