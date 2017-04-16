@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
+	const FUTEBOL = 'futebol';
+	const BASKETBALL ='basketball';
+	const VOLEI = 'vólei';
+	const FUTSAL = 'futsal';
+
     protected $fillable = [
         'owner',
     	'type',

@@ -34,7 +34,7 @@ class User extends Authenticatable
 
     public function calculateOverall($nota, $somaNotas, $couter)
     {
-		return ($nota + $somaNotas)/$couter;
+		$this->overall = ($nota + $somaNotas)/$couter;
     }
 
     public function roles()

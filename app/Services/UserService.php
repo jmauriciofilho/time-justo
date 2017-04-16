@@ -78,7 +78,11 @@ class UserService
 	{
 		$user = User::find($request->get('id'));
 
-		$user->overall = $request->get('overall');
+		$nota = $request->get('nota');
+		$somaNota = $request->get('somaNota');
+		$coute = $request->get('coute');
+
+		$user->calculateOverall($nota, $somaNota, $coute);
 
 		$user->save();
 
@@ -100,9 +104,9 @@ class UserService
 	{
 		$users = $request->get('user_id');
 
-		$game = Event::find($request->get('game_id'));
+		$event = Event::find($request->get('game_id'));
 
-		$game->users()->attach($users);
+		$event->users()->attach($users);
 
 		return "Usuários convidados com sucesso!";
 	}

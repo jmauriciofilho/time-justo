@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Group extends Model
 {
+	const PRIVADO = 'privado';
+	const PUBLICO = 'público';
+
     protected $fillable = [
     	'owner',
 	    'type',

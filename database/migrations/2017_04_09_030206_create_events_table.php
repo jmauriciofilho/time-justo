@@ -20,7 +20,7 @@ class CreateGamesTable extends Migration
             $table->foreign('owner')->references('id')->on('users')
 	            ->onDelete('cascade');
 
-            $table->enum('type', []);
+            $table->enum('type', ['futebol', 'basketball', 'vólei', 'futsal']);
 	        $table->date('date');
             $table->integer('minimumUsers');
             $table->integer('maximumUsers');

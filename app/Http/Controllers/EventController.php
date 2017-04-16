@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\GameService;
+use App\Services\EventService;
 use Illuminate\Http\Request;
 
-class GameController extends Controller
+class EventController extends Controller
 {
     private $gameService;
 
-    function __construct(GameService $gameService)
+    function __construct(EventService $gameService)
     {
     	$this->gameService = $gameService;
     }
@@ -29,7 +29,7 @@ class GameController extends Controller
     	return $this->gameService->delete($request);
     }
 
-    public function allGames()
+    public function allEvents()
     {
     	return $this->gameService->allGames();
     }

@@ -12,7 +12,7 @@ namespace App\Services;
 use App\Models\Event;
 use Illuminate\Http\Request;
 
-class GameService
+class EventService
 {
 	private $game;
 
@@ -54,7 +54,7 @@ class GameService
 		}
 	}
 
-	public function allGames()
+	public function allEvents()
 	{
 		$games = Event::all();
 
