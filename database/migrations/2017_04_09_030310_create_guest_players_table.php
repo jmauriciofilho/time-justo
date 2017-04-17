@@ -16,8 +16,8 @@ class CreateGuestPlayersTable extends Migration
         Schema::create('guest_players', function (Blueprint $table) {
         	$table->increments('id');
 
-           $table->integer('game_id')->unsigned();
-           $table->foreign('game_id')->references('id')->on('games')
+           $table->integer('event_id')->unsigned();
+           $table->foreign('event_id')->references('id')->on('events')
 	           ->onUpdate('cascade')->onDelete('cascade');
 
            $table->integer('user_id')->unsigned();

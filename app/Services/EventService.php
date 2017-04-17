@@ -54,6 +54,16 @@ class EventService
 		}
 	}
 
+	public function setIsConfirmation()
+	{
+
+	}
+
+	public function eventAttendance()
+	{
+
+	}
+
 	public function allEvents()
 	{
 		$games = Event::all();

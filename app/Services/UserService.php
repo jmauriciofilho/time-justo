@@ -111,6 +111,16 @@ class UserService
 		return "Usuários convidados com sucesso!";
 	}
 
+	public function makeFriends()
+	{
+
+	}
+
+	public function myFriends()
+	{
+
+	}
+
 	public function allUsers()
 	{
 		$users = User::all();
