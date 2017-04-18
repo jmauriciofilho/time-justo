@@ -14,18 +14,18 @@ use Illuminate\Http\Request;
 
 class EventService
 {
-	private $game;
+	private $event;
 
-	function __construct(Event $game)
+	function __construct(Event $event)
 	{
-		$this->game = $game;
+		$this->event = $event;
 	}
 
 	public function create(Request $request)
 	{
-		$createGame = $this->game->create($request->all());
+		$createEvent = $this->event->create($request->all());
 
-		if ($createGame){
+		if ($createEvent){
 			return "Evento criado com sucesso!";
 		}else{
 			return "Erro ao criar evento! ";
@@ -34,9 +34,9 @@ class EventService
 
 	public function update(Request $request)
 	{
-		$updateGame = $this->game->where('id', $request->get('id'))->update($request->all());
+		$updateEvent = $this->event->where('id', $request->get('id'))->update($request->all());
 
-		if ($updateGame){
+		if ($updateEvent){
 			return "Evento atualizado com sucesso!";
 		}else{
 			return "Erro ao atualizar evento!";
@@ -45,30 +45,40 @@ class EventService
 
 	public function delete(Request $request)
 	{
-		$deleteGame = $this->game->where('id', $request->get('id'))->delete();
+		$deleteEvent = $this->event->where('id', $request->get('id'))->delete();
 
-		if ($deleteGame){
+		if ($deleteEvent){
 			return "Evento excluido com sucesso!";
 		}else{
 			return "Erro ao excluir evento!";
 		}
 	}
 
-	public function setIsConfirmation()
+	public function setIsConfirmation(Request $request)
 	{
+		$event = $this->event->where('id', $request->get('id'))->first();
+		$event->isEventConfirmed = $request->get('isEventConfirmed');
+		$event->save();
 
+		if ($event->isEventConfirmed){
+			return "Evento confirmado!";
+		} else {
+			return "Evento cancelado!";
+		}
 	}
 
-	public function eventAttendance()
+	public function eventAttendance(Request $request)
 	{
+		$event = $event = $this->event->where('id', $request->get('id'))->first();
 
+		return json_encode($event->users);
 	}
 
 	public function allEvents()
 	{
-		$games = Event::all();
+		$event = Event::all();
 
-		return json_encode($games);
+		return json_encode($event);
 	}
 
 }

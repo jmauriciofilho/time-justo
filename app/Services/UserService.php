@@ -104,11 +104,16 @@ class UserService
 	{
 		$users = $request->get('user_id');
 
-		$event = Event::find($request->get('game_id'));
+		$event = Event::find($request->get('event_id'));
 
 		$event->users()->attach($users);
 
 		return "Usuários convidados com sucesso!";
+	}
+
+	public function addUserGroup()
+	{
+
 	}
 
 	public function makeFriends()
