@@ -30,6 +30,6 @@ class Event extends Model
 
     public function users()
     {
-    	return $this->belongsToMany(User::class, 'guest_players', 'game_id', 'user_id');
+    	return $this->belongsToMany(User::class, 'guest_players', 'event_id', 'user_id');
     }
 }

@@ -28,7 +28,7 @@ class CreateGuestPlayersTable extends Migration
 
            $table->timestamps();
 
-           $table->unique(['game_id', 'user_id']);
+           $table->unique(['event_id', 'user_id']);
         });
     }
 
