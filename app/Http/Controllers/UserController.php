@@ -50,11 +50,6 @@ class UserController extends Controller
 		return $this->userService->invitePlayers($request);
 	}
 
-	public function setConfirmParticipation(Request $request)
-	{
-		return GuestPlayersService::class->setConfirmParticipation($request);
-	}
-
 	public function addUserGroup(Request $request)
 	{
 		return $this->userService->addUserGroup($request);
