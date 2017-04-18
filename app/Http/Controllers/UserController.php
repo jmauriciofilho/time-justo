@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\GuestPlayersService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 
@@ -51,7 +52,22 @@ class UserController extends Controller
 
 	public function setConfirmParticipation(Request $request)
 	{
-		return $this->userService->setConfirmParticipation($request);
+		return GuestPlayersService::class->setConfirmParticipation($request);
+	}
+
+	public function addUserGroup(Request $request)
+	{
+		return $this->userService->addUserGroup($request);
+	}
+
+	public function makeFriends(Request $request)
+	{
+		return $this->userService->makeFriends($request);
+	}
+
+	public function myFriends(Request $request)
+	{
+		return $this->userService->myFriends($request);
 	}
 
     public function allUsers()

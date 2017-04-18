@@ -9,6 +9,7 @@
 namespace App\Services;
 
 use App\Models\Event;
+use App\Models\Group;
 use App\Models\GuestPlayers;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -111,19 +112,32 @@ class UserService
 		return "Usuários convidados com sucesso!";
 	}
 
-	public function addUserGroup()
+	public function addUserGroup(Request $request)
 	{
+		$users = $request->get('user_id');
 
+		$group = Group::find($request->get('group_id'));
+
+		$group->users()->attach($users);
+
+		return "Usuários adicionados ao grupo com sucesso!";
 	}
 
-	public function makeFriends()
+	public function makeFriends(Request $request)
 	{
+		$user = User::find($request->get('user_id'));
+		$friend = User::find($request->get('user_friend_id'));
 
+		$user->users()->attach($friend);
+
+		return "Amizade criada com sucesso!";
 	}
 
-	public function myFriends()
+	public function myFriends(Request $request)
 	{
+		$user = User::find($request->get('id'));
 
+		return json_encode($user->users);
 	}
 
 	public function allUsers()
