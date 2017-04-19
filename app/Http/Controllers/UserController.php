@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\GuestPlayersService;
+use App\Http\Requests\UserChangePasswordRequest;
+use App\Http\Requests\UserRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 
@@ -20,14 +22,19 @@ class UserController extends Controller
     	return $this->userService->loginApp($request);
     }
 
-    public function create(Request $request)
+    public function create(UserRequest $request)
     {
     	return $this->userService->create($request);
     }
 
-    public function update(Request $request)
+    public function update(UserUpdateRequest $request)
     {
     	return $this->userService->update($request);
+    }
+
+    public function changePassword(UserChangePasswordRequest $request)
+    {
+    	return $this->userService->changePassword($request);
     }
 
     public function delete(Request $request)

@@ -26,8 +26,6 @@ class CreateGuestPlayersTable extends Migration
 
            $table->boolean('confirmParticipation')->default(false);
 
-           $table->timestamps();
-
            $table->unique(['event_id', 'user_id']);
         });
     }

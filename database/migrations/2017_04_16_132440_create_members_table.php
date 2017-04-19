@@ -24,8 +24,6 @@ class CreateMembersTable extends Migration
 	        $table->foreign('user_id')->references('id')->on('users')
 		        ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->timestamps();
-
 	        $table->unique(['group_id', 'user_id']);
         });
     }

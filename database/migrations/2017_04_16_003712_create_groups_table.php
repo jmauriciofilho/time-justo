@@ -21,7 +21,7 @@ class CreateGroupsTable extends Migration
 	            ->onDelete('cascade');
 
             $table->enum('type', ['privado', 'publico']);
-	        $table->integer('quantUsers');
+	        $table->integer('quantUsers')->default(0);
             $table->timestamps();
         });
     }

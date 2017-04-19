@@ -10,7 +10,7 @@ namespace App\Services;
 
 use App\Models\Event;
 use App\Models\Group;
-use App\Models\GuestPlayers;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 class UserService
 {
 	private $user;
+	private $errors;
 
 	function __construct(User $user)
 	{
@@ -44,24 +45,29 @@ class UserService
 	{
 		DB::transaction(function() use ($request)
 		{
-			$role = $request->get('role_id');
+			$role = Role::find(2);
+			$role_id = $role->id;
 			$request->merge(['password' => bcrypt($request->get("password"))]);
 			$user = $this->user->create($request->all());
-			$user->roles()->attach($role);
+			$user->roles()->attach($role_id);
 		});
 		return "Usuário criado com sucesso.";
 	}
 
 	public function update(Request $request)
 	{
-		$request->merge(['password' => bcrypt($request->get("password"))]);
-		$updateUser = $this->user->where('id', $request->get('id'))->update($request->all());
+		$this->user->where('id', $request->get('id'))->update($request->all());
 
-		if ($updateUser){
-			return "Usuário atualizado com sucesso!";
-		}else{
-			return "Erro ao atualizar usuário!";
-		}
+		return "Usuário atualizado com sucesso!";
+	}
+
+	public function changePassword(Request $request)
+	{
+		$request->merge(['password' => bcrypt($request->get("password"))]);
+		$user = User::find($request->get('id'));
+		$user->password = $request->get('password');
+		$user->save();
+		return "Senha alterada com sucesso!";
 	}
 
 	public function delete(Request $request)
@@ -117,6 +123,9 @@ class UserService
 		$users = $request->get('user_id');
 
 		$group = Group::find($request->get('group_id'));
+
+		$group->quantUsers = $group->quantUsers + count($users);
+		$group->save();
 
 		$group->users()->attach($users);
 
