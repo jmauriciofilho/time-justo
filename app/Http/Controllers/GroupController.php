@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use app\Services\GroupService;
+use App\Services\GroupService;
 use Illuminate\Http\Request;
 
 class GroupController extends Controller

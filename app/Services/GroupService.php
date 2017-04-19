@@ -6,7 +6,7 @@
  * Time: 13:16
  */
 
-namespace app\Services;
+namespace App\Services;
 
 
 use App\Models\Group;
@@ -26,7 +26,7 @@ class GroupService
 		$isCreate = $this->group->create($request->all());
 
 		if ($isCreate){
-			return "Grupo creado com sucesso!";
+			return "Grupo criado com sucesso!";
 		} else {
 			return "Erro ao criar grupo!";
 		}
