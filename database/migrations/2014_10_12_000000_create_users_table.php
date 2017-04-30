@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
+            $table->rememberToken();
             $table->double('overall')->default(0.0);
             $table->integer('goalsScored')->default(0);
             $table->string('appearances')->nullable();
