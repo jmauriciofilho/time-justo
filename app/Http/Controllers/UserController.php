@@ -22,6 +22,16 @@ class UserController extends Controller
     	return $this->userService->loginApp($request);
     }
 
+    public function isLogged(Request $request)
+    {
+    	return $this->userService->isLogged($request);
+    }
+
+    public function logout(Request $request)
+    {
+    	return $this->userService->logoutApp($request);
+    }
+
     public function create(UserRequest $request)
     {
     	return $this->userService->create($request);

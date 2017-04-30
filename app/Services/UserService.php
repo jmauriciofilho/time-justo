@@ -32,13 +32,34 @@ class UserService
 		$has = Auth::attempt(['email' => $request->get('email'),
 			'password' => $request->get('password')]);
 		if ($has) {
+			$token = str_random(16);
 			$user = User::all()->where('email', '=', $request->get('email'))->first();
+			$user->token_api = $token;
+			$user->save();
 			$json = new Collection();
 			$json->put('user', $user->toArray());
 			$json->put('role', $user->roles->toArray());
 			return json_encode($json->toArray());
 		}
 		return "Usuário não encontrado!";
+	}
+
+	public function isLogged(Request $request)
+	{
+		$user = User::find($request->get('id'));
+		if($request->get('token_api') == $user->token_api){
+			return "1";
+		}else{
+			return "0";
+		}
+	}
+
+	public function logoutApp(Request $request)
+	{
+		$user = User::find($request->get('id'));
+		$user->token_api = null;
+		$user->save();
+		return "Usuário foi deslogado!";
 	}
 
 	public function create(Request $request)

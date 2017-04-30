@@ -18,6 +18,7 @@ class User extends Authenticatable
         'name',
 	    'email',
 	    'password',
+	    'token_api',
 	    'overall',
 	    'goalsScored',
 	    'appearances',
