@@ -17,6 +17,10 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('email')->unique();
+
+	        $table->integer('media_id')->unsigned()->nullable();
+	        $table->foreign('media_id')->references('id')->on('medias')->onDelete('set null');
+
 	        $table->string('token_api')->nullable();
             $table->string('password');
             $table->rememberToken();

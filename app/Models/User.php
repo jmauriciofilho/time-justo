@@ -19,6 +19,7 @@ class User extends Authenticatable
 	    'email',
 	    'password',
 	    'token_api',
+	    'media_id',
 	    'overall',
 	    'goalsScored',
 	    'appearances',
@@ -47,5 +48,10 @@ class User extends Authenticatable
     public function users()
     {
     	return $this->belongsToMany(User::class, 'friends', 'user_id', 'user_friend_id');
+    }
+
+    public function avatar()
+    {
+    	return $this->hasOne(Media::class);
     }
 }
