@@ -10,10 +10,8 @@ namespace app\Services;
 
 
 use App\Models\Media;
-use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 
 class MediaService
 {
@@ -26,8 +24,7 @@ class MediaService
 
 	public function uploadMedia(UploadedFile $file, $pathDestination, $fileName)
 	{
-
-			$data = [];
+            $data = [];
 			$data['file'] = $file;
 			$data['filename'] = str_slug($fileName) . '-' . str_random(10);
 			$data['extension'] = $file->getClientOriginalExtension();
@@ -43,12 +40,18 @@ class MediaService
 			return Media::create($data);
 	}
 
-	public function deleteMedia(Request $request)
+	public function deleteMedia($id)
 	{
-		$id = $request->get('id');
 		$file = Media::find($id);
-		//$file->delete();
-		return "Arquivo deletado!";
+		if ($file != null){
+            $filename = $file->filename . "." . $file->extension;
+            $pathDestination = 'media';
+            //dd($filename);
+            unlink(public_path($pathDestination."/".$filename));
+            $file->delete();
+            return "Arquivo deletado!";
+        }
+		return "Imagem não encontrada!";
 	}
 
 }

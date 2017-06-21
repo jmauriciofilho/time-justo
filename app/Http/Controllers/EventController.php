@@ -34,6 +34,11 @@ class EventController extends Controller
 		return $this->eventService->setIsConfirmation($request);
 	}
 
+	public function addEventImage(Request $request)
+    {
+        return $this->eventService->addEventImage($request);
+    }
+
 	public function eventAttendance(Request $request)
 	{
 		return $this->eventService->eventAttendance($request);

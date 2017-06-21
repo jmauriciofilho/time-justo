@@ -8,8 +8,10 @@
 
 namespace App\Services;
 
+use App\Http\Controllers\MediaController;
 use App\Models\Event;
 use App\Models\Group;
+use App\Models\Media;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,11 +22,12 @@ use Illuminate\Support\Facades\DB;
 class UserService
 {
 	private $user;
-	private $errors;
+	private $media;
 
-	function __construct(User $user)
+	function __construct(User $user, MediaController $media)
 	{
 		$this->user = $user;
+		$this->media = $media;
 	}
 
 	public function loginApp(Request $request)
@@ -169,6 +172,26 @@ class UserService
 
 		return json_encode($user->users);
 	}
+
+	public function addAvatar(Request $request)
+    {
+        $file = $request->file('image');
+        $user = User::find($request->get('idUser'));
+        if ($user->media_id != null){
+            $id = Media::find($user->media_id);
+            $this->media->deleteMedia($id);
+            $avatar = $this->media->uploadMedia($file);
+            $user->media_id = $avatar->id;
+            $user->save();
+            return "Avatar alterado com sucesso!";
+        }else{
+            $avatar = $this->media->uploadMedia($file);
+            $user->media_id = $avatar->id;
+            $user->save();
+            return "Avatar salvo com sucesso!";
+        }
+
+    }
 
 	public function allUsers()
 	{

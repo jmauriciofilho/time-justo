@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\MediaService;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 
 class MediaController extends Controller
 {
@@ -14,17 +15,16 @@ class MediaController extends Controller
     	$this->mediaService = $mediaService;
     }
 
-    public function uploadMedia(Request $request)
+    public function uploadMedia(UploadedFile $file)
     {
-    	$file = $request->file('image');
 		$pathDestination = 'media';
 		$fileName = 'image';
 
     	return $this->mediaService->uploadMedia($file, $pathDestination, $fileName);
     }
 
-    public function deleteMedia(Request $request)
+    public function deleteMedia($id)
     {
-		return $this->mediaService->deleteMedia($request);
+		return $this->mediaService->deleteMedia($id);
     }
 }

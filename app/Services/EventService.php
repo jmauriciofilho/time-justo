@@ -9,16 +9,20 @@
 namespace App\Services;
 
 
+use App\Http\Controllers\MediaController;
 use App\Models\Event;
+use App\Models\Media;
 use Illuminate\Http\Request;
 
 class EventService
 {
 	private $event;
+	private $media;
 
-	function __construct(Event $event)
+	function __construct(Event $event, MediaController $media)
 	{
 		$this->event = $event;
+		$this->media = $media;
 	}
 
 	public function create(Request $request)
@@ -66,6 +70,26 @@ class EventService
 			return "Evento cancelado!";
 		}
 	}
+
+	public function addEventImage(Request $request)
+    {
+        $file = $request->file('image');
+        $event = Event::find($request->get('idEvent'));
+        if ($event->media_id != null){
+            $id = Media::find($event->media_id);
+            $this->media->deleteMedia($id);
+            $avatar = $this->media->uploadMedia($file);
+            $event->media_id = $avatar->id;
+            $event->save();
+            return "Imagem do evento alterada com sucesso!";
+        }else{
+            $avatar = $this->media->uploadMedia($file);
+            $event->media_id = $avatar->id;
+            $event->save();
+            return "Imagem do evento salva com sucesso!";
+        }
+
+    }
 
 	public function eventAttendance(Request $request)
 	{
