@@ -34,35 +34,54 @@ class UserService
 	{
 		$has = Auth::attempt(['email' => $request->get('email'),
 			'password' => $request->get('password')]);
+
 		if ($has) {
+
 			$token = str_random(16);
+
 			$user = User::all()->where('email', '=', $request->get('email'))->first();
 			$user->token_api = $token;
 			$user->save();
+
+			$userLoggedIn = [
+                'cod' => 200,
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'media_id' => $user->media_id,
+                'token_api' => $user->token_api
+            ];
+
 			$json = new Collection();
-			$json->put('user', $user->toArray());
-			$json->put('role', $user->roles->toArray());
-			return json_encode($json->toArray());
+            $json->put('response', $userLoggedIn);
+			//dd($json);
+
+            return json_encode($json->toArray());
 		}
-		return "Usuário não encontrado!";
+		return 400;
 	}
 
 	public function isLogged(Request $request)
 	{
 		$user = User::find($request->get('id'));
 		if($request->get('token_api') == $user->token_api){
-			return "1";
+			return 1;
 		}else{
-			return "0";
+			return 0;
 		}
 	}
 
 	public function logoutApp(Request $request)
 	{
 		$user = User::find($request->get('id'));
-		$user->token_api = null;
-		$user->save();
-		return "Usuário foi deslogado!";
+		if ($user != null){
+            $user->token_api = null;
+            $user->save();
+            return 200;
+        }else{
+		    return 400;
+        }
+
 	}
 
 	public function create(Request $request)
@@ -75,14 +94,14 @@ class UserService
 			$user = $this->user->create($request->all());
 			$user->roles()->attach($role_id);
 		});
-		return "Usuário criado com sucesso.";
+		return 200;
 	}
 
 	public function update(Request $request)
 	{
 		$this->user->where('id', $request->get('id'))->update($request->all());
 
-		return "Usuário atualizado com sucesso!";
+		return 200;
 	}
 
 	public function changePassword(Request $request)
@@ -91,7 +110,7 @@ class UserService
 		$user = User::find($request->get('id'));
 		$user->password = $request->get('password');
 		$user->save();
-		return "Senha alterada com sucesso!";
+		return 200;
 	}
 
 	public function delete(Request $request)
@@ -99,9 +118,9 @@ class UserService
 		$deleteUser = $this->user->where('id', $request->get('id'))->delete();
 
 		if ($deleteUser){
-			return "Usuário removido com sucesso!";
+			return 200;
 		}else{
-			return "Erro ao remover usuário!";
+			return 400;
 		}
 	}
 
@@ -117,7 +136,7 @@ class UserService
 
 		$user->save();
 
-		return "Média registrada!";
+		return 200;
 	}
 
 	public function setGoalsScored(Request $request)
@@ -128,7 +147,7 @@ class UserService
 
 		$user->save();
 
-		return "Numero de goals registrado!";
+		return 200;
 	}
 
 	public function invitePlayers(Request $request)
@@ -139,7 +158,7 @@ class UserService
 
 		$event->users()->attach($users);
 
-		return "Usuários convidados com sucesso!";
+		return 200;
 	}
 
 	public function addUserGroup(Request $request)
@@ -153,7 +172,7 @@ class UserService
 
 		$group->users()->attach($users);
 
-		return "Usuários adicionados ao grupo com sucesso!";
+		return 200;
 	}
 
 	public function makeFriends(Request $request)
@@ -163,7 +182,7 @@ class UserService
 
 		$user->users()->attach($friend);
 
-		return "Amizade criada com sucesso!";
+		return 200;
 	}
 
 	public function myFriends(Request $request)
@@ -183,12 +202,24 @@ class UserService
             $avatar = $this->media->uploadMedia($file);
             $user->media_id = $avatar->id;
             $user->save();
-            return "Avatar alterado com sucesso!";
+            return 200;
         }else{
             $avatar = $this->media->uploadMedia($file);
             $user->media_id = $avatar->id;
             $user->save();
-            return "Avatar salvo com sucesso!";
+            return 200;
+        }
+
+    }
+
+    public function returnUser(Request $request)
+    {
+        $user = User::find($request->get('id'));
+
+        if ($user != null){
+            return json_encode($user);
+        }else{
+            return 404;
         }
 
     }

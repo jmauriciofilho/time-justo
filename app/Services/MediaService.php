@@ -49,9 +49,9 @@ class MediaService
             //dd($filename);
             unlink(public_path($pathDestination."/".$filename));
             $file->delete();
-            return "Arquivo deletado!";
+            return 200;
         }
-		return "Imagem não encontrada!";
+		return 404;
 	}
 
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\MediaController;
 use App\Models\Event;
 use App\Models\Media;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class EventService
 {
@@ -30,9 +31,17 @@ class EventService
 		$createEvent = $this->event->create($request->all());
 
 		if ($createEvent){
-			return "Evento criado com sucesso!";
+		    $response = [
+		        'cod' => 200,
+                'id_event' => $createEvent->id
+            ];
+
+		    $json = new Collection();
+		    $json->put('response', $response);
+
+			return json_encode($json);
 		}else{
-			return "Erro ao criar evento! ";
+			return 400;
 		}
 	}
 
@@ -41,9 +50,9 @@ class EventService
 		$updateEvent = $this->event->where('id', $request->get('id'))->update($request->all());
 
 		if ($updateEvent){
-			return "Evento atualizado com sucesso!";
+			return 200;
 		}else{
-			return "Erro ao atualizar evento!";
+			return 400;
 		}
 	}
 
@@ -52,9 +61,9 @@ class EventService
 		$deleteEvent = $this->event->where('id', $request->get('id'))->delete();
 
 		if ($deleteEvent){
-			return "Evento excluido com sucesso!";
+			return 200;
 		}else{
-			return "Erro ao excluir evento!";
+			return 400;
 		}
 	}
 
@@ -65,9 +74,9 @@ class EventService
 		$event->save();
 
 		if ($event->isEventConfirmed){
-			return "Evento confirmado!";
+			return 1;
 		} else {
-			return "Evento cancelado!";
+			return 0;
 		}
 	}
 
@@ -81,19 +90,32 @@ class EventService
             $avatar = $this->media->uploadMedia($file);
             $event->media_id = $avatar->id;
             $event->save();
-            return "Imagem do evento alterada com sucesso!";
+            return 200;
         }else{
             $avatar = $this->media->uploadMedia($file);
             $event->media_id = $avatar->id;
             $event->save();
-            return "Imagem do evento salva com sucesso!";
+            return 200;
         }
 
     }
 
+    public function returnEvent(Request $request)
+    {
+        $event = Event::find($request->get('id'));
+
+        $json = new Collection();
+        $json->put('event', $event->toArray());
+        $json->put('invites', $event->users->toArray());
+
+        //dd($json->toArray());
+
+        return json_encode($json->toArray());
+    }
+
 	public function eventAttendance(Request $request)
 	{
-		$event = $event = $this->event->where('id', $request->get('id'))->first();
+		$event = $this->event->where('id', $request->get('id'))->first();
 
 		return json_encode($event->users);
 	}

@@ -87,6 +87,11 @@ class UserController extends Controller
         return $this->userService->addAvatar($request);
     }
 
+    public function returnUser(Request $request)
+    {
+        return $this->userService->returnUser($request);
+    }
+
     public function allUsers()
     {
     	return $this->userService->allUsers();

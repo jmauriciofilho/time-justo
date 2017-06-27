@@ -18,7 +18,6 @@ class Event extends Model
 	    'minimumUsers',
 	    'maximumUsers',
 	    'valueToBePaid',
-	    'costByUser',
 	    'address',
 	    'isEventConfirmed',
     ];

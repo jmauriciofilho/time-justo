@@ -39,6 +39,11 @@ class EventController extends Controller
         return $this->eventService->addEventImage($request);
     }
 
+    public function returnEvent(Request $request)
+    {
+        return $this->eventService->returnEvent($request);
+    }
+
 	public function eventAttendance(Request $request)
 	{
 		return $this->eventService->eventAttendance($request);

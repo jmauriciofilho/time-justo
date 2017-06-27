@@ -26,9 +26,9 @@ class GroupService
 		$isCreate = $this->group->create($request->all());
 
 		if ($isCreate){
-			return "Grupo criado com sucesso!";
+			return 200;
 		} else {
-			return "Erro ao criar grupo!";
+			return 400;
 		}
 	}
 
@@ -37,9 +37,9 @@ class GroupService
 		$isUpdate = $this->group->where('id', $request->get('id'))->update($request->all());
 
 		if ($isUpdate){
-			return "Grupo atualizado com sucesso!";
+			return 200;
 		} else{
-			return "Erro ao atualizar grupo!";
+			return 400;
 		}
 	}
 
@@ -48,9 +48,9 @@ class GroupService
 		$isDelete = $this->group->where('id', $request->get('id'))->delete();
 
 		if ($isDelete){
-			return "Grupo excluido com sucesso!";
+			return 200;
 		}else{
-			return "Erro ao excluir grupo!";
+			return 400;
 		}
 	}
 

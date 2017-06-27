@@ -29,7 +29,6 @@ class CreateEventsTable extends Migration
             $table->integer('minimumUsers');
             $table->integer('maximumUsers');
             $table->double('valueToBePaid');
-            $table->double('costByUser');
             $table->boolean('isEventConfirmed')->default(true);
             $table->string('address');
             $table->timestamps();

@@ -29,7 +29,7 @@ class GuestPlayersService
 
 		$guestPlayers->save();
 
-		return "Participação alterada!";
+		return 200;
 	}
 
 }
