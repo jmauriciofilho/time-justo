@@ -14,6 +14,7 @@ use App\Models\Group;
 use App\Models\Media;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -57,24 +58,31 @@ class UserService
 			//dd($json);
 
             return json_encode($json->toArray());
-		}
-		return 400;
+		}else{
+            return 400;
+        }
+
 	}
 
 	public function isLogged(Request $request)
 	{
-		$user = User::find($request->get('id'));
-		if($request->get('token_api') == $user->token_api){
-			return 1;
-		}else{
-			return 0;
-		}
+	    try{
+            $user = User::find($request->get('id'));
+            if($request->get('token_api') == $user->token_api){
+                return 1;
+            }else{
+                return 0;
+            }
+        }catch (\ErrorException $e){
+            return 400;
+        }
+
 	}
 
 	public function logoutApp(Request $request)
 	{
 		$user = User::find($request->get('id'));
-		if ($user != null){
+		if ($user != null && $user->token_api != null){
             $user->token_api = null;
             $user->save();
             return 200;
@@ -86,31 +94,47 @@ class UserService
 
 	public function create(Request $request)
 	{
-		DB::transaction(function() use ($request)
-		{
-			$role = Role::find(2);
-			$role_id = $role->id;
-			$request->merge(['password' => bcrypt($request->get("password"))]);
-			$user = $this->user->create($request->all());
-			$user->roles()->attach($role_id);
-		});
-		return 200;
+	    try{
+            DB::transaction(function() use ($request)
+            {
+                $role = Role::find(2);
+                $role_id = $role->id;
+                $request->merge(['password' => bcrypt($request->get("password"))]);
+                $user = $this->user->create($request->all());
+                $user->roles()->attach($role_id);
+            });
+            return 200;
+        }catch (QueryException $e){
+	        return 400;
+        }
+
 	}
 
 	public function update(Request $request)
 	{
-		$this->user->where('id', $request->get('id'))->update($request->all());
+		$update = $this->user->where('id', $request->get('id'))->update($request->all());
 
-		return 200;
+		if ($update){
+            return 200;
+        }else{
+		    return 400;
+        }
+
 	}
 
 	public function changePassword(Request $request)
 	{
 		$request->merge(['password' => bcrypt($request->get("password"))]);
 		$user = User::find($request->get('id'));
-		$user->password = $request->get('password');
-		$user->save();
-		return 200;
+
+		if ($user != null){
+            $user->password = $request->get('password');
+            $user->save();
+            return 200;
+        }else{
+		    return 400;
+        }
+
 	}
 
 	public function delete(Request $request)
@@ -128,15 +152,20 @@ class UserService
 	{
 		$user = User::find($request->get('id'));
 
-		$nota = $request->get('nota');
-		$somaNota = $request->get('somaNota');
-		$coute = $request->get('coute');
+		if ($user != null){
+            $nota = $request->get('nota');
+            $somaNota = $request->get('somaNota');
+            $coute = $request->get('coute');
 
-		$user->calculateOverall($nota, $somaNota, $coute);
+            $user->calculateOverall($nota, $somaNota, $coute);
 
-		$user->save();
+            $user->save();
 
-		return 200;
+            return 200;
+        }else{
+		    return 400;
+        }
+
 	}
 
 	public function setGoalsScored(Request $request)
