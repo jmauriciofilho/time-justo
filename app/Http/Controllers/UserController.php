@@ -77,6 +77,11 @@ class UserController extends Controller
 		return $this->userService->makeFriends($request);
 	}
 
+	public function removeFriends(Request $request)
+    {
+        return $this->userService->removeFriends($request);
+    }
+
 	public function myFriends(Request $request)
 	{
 		return $this->userService->myFriends($request);

@@ -70,12 +70,18 @@ class EventService
 	public function setIsConfirmation(Request $request)
 	{
 		$event = $this->event->where('id', $request->get('id'))->first();
-		$event->isEventConfirmed = $request->get('isEventConfirmed');
-		$event->save();
 
-		if ($event->isEventConfirmed){
+		$numberUserConfirmed = count($event->users()->where('confirmParticipation', '=', true)->get());
+
+		//dd($numberUserConfirmed);
+
+		if ($event->minimumUsers <= $numberUserConfirmed){
+            $event->isEventConfirmed = true;
+            $event->save();
 			return 1;
 		} else {
+            $event->isEventConfirmed = false;
+            $event->save();
 			return 0;
 		}
 	}
@@ -104,9 +110,13 @@ class EventService
     {
         $event = Event::find($request->get('id'));
 
+        //dd($event->users()->where('confirmParticipation', '=', true)->get());
+        $confirmed = $event->users()->where('confirmParticipation', '=', true)->get();
+
         $json = new Collection();
         $json->put('event', $event->toArray());
         $json->put('invites', $event->users->toArray());
+        $json->put('confirmed', $confirmed->toArray());
 
         //dd($json->toArray());
 

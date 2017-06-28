@@ -11,4 +11,6 @@ class GuestPlayers extends Model
 	    'user_id',
 	    'confirmParticipation',
     ];
+
+    public $timestamps = false;
 }

@@ -23,7 +23,8 @@ class GuestPlayersService
 
 	public function setConfirmParticipation(Request $request)
 	{
-		$guestPlayers = $this->guestPlayers->where('id', $request->get('id'))->first();
+		$guestPlayers = $this->guestPlayers
+            ->where('user_id', '=', $request->get('user_id'))->first();
 
 		$guestPlayers->confirmParticipation = $request->get('confirmParticipation');
 

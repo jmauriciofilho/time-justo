@@ -154,11 +154,16 @@ class UserService
 	{
 		$users = $request->get('user_id');
 
+        $user = User::find($users);
 		$event = Event::find($request->get('event_id'));
 
-		$event->users()->attach($users);
+		if ($user != null && $event != null){
+            $event->users()->attach($users);
+            return 200;
+        }else{
+		    return 404;
+        }
 
-		return 200;
 	}
 
 	public function addUserGroup(Request $request)
@@ -180,10 +185,28 @@ class UserService
 		$user = User::find($request->get('user_id'));
 		$friend = User::find($request->get('user_friend_id'));
 
-		$user->users()->attach($friend);
+		if ($user != null && $friend != null){
+            $user->users()->attach($friend);
+            return 200;
+        }else{
+		    return 404;
+        }
 
-		return 200;
 	}
+
+	public function removeFriends(Request $request)
+    {
+        $friends = DB::table('friends')
+            ->where('user_id', $request->get('user_id'))
+            ->where('user_friend_id', $request->get('user_friend_id'))
+            ->delete();
+
+        if ($friends != null){
+            return 200;
+        }else{
+            return 404;
+        }
+    }
 
 	public function myFriends(Request $request)
 	{
