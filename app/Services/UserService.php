@@ -57,36 +57,27 @@ class UserService
         }else{
             return null;
         }
-
-
 	}
 
 	public function isLogged(Request $request)
 	{
-	    if($request->has('token_api')) {
-	        $user = User::where('token_api', $request->get('token_api'))->get()->first();
-            return $this->httpResponses->reponseSuccess(!empty($user));
-        }
-        return $this->httpResponses->errorParameters();
+	    return User::where('token_api', $request->get('token_api'))->get()->first();
 	}
 
 	public function logoutApp(Request $request)
 	{
-	    if ($request->has('token_api')){
-            $user = User::where('token_api', $request->get('token_api'))->get()->first();
-            if (!empty($user)){
-                $user->token_api = null;
-                $user->save();
-                return $this->httpResponses->success();
-            }
-            return $this->httpResponses->reponseSuccess('Token invalido!');
+        $user = User::where('token_api', $request->get('token_api'))->get()->first();
+        if (!empty($user)){
+            $user->token_api = null;
+            $user->save();
+            return true;
         }
-        return $this->httpResponses->errorParameters();
+        return false;
 	}
 
 	public function create(Request $request)
 	{
-        DB::transaction(function() use ($request)
+	    DB::transaction(function() use ($request)
         {
             $role = Role::find(2);
             $role_id = $role->id;
@@ -100,74 +91,61 @@ class UserService
 	{
 	    DB::transaction(function () use ($request)
         {
-            $update = $this->user->where('id', $request->get('id'))->update($request->all());
-
-            if ($update){
-                return 200;
-            }else{
-                return 400;
-            }
+            $this->user->where('token_api', $request->get('token_api'))
+                ->update($request->all());
         });
-
-
 	}
 
 	public function changePassword(Request $request)
 	{
-		$request->merge(['password' => bcrypt($request->get("password"))]);
-		$user = User::find($request->get('id'));
+	    DB::transaction(function () use ($request){
+            $request->merge(['password' => bcrypt($request->get("password"))]);
+            $user = User::where('token_api', $request->get('token_api'))->get()->first();
 
-		if ($user != null){
-            $user->password = $request->get('password');
-            $user->save();
-            return 200;
-        }else{
-		    return 400;
-        }
-
+            if (!empty($user)) {
+                $user->password = $request->get('password');
+                $user->save();
+            }
+        });
 	}
 
 	public function delete(Request $request)
 	{
-		$deleteUser = $this->user->where('id', $request->get('id'))->delete();
-
-		if ($deleteUser){
-			return 200;
-		}else{
-			return 400;
-		}
+	    DB::transaction(function () use ($request){
+            $this->user->where('token_api', $request->get('token_api'))->delete();
+        });
 	}
 
-	public function setOverall(Request $request)
-	{
-		$user = User::find($request->get('id'));
-
-		if ($user != null){
-            $nota = $request->get('nota');
-            $somaNota = $request->get('somaNota');
-            $coute = $request->get('coute');
-
-            $user->calculateOverall($nota, $somaNota, $coute);
-
-            $user->save();
-
-            return 200;
-        }else{
-		    return 400;
-        }
-
-	}
-
-	public function setGoalsScored(Request $request)
-	{
-		$user = User::find($request->get('id'));
-
-		$user->goalsScored = $request->get('goalsScored');
-
-		$user->save();
-
-		return 200;
-	}
+//	public function setOverall(Request $request)
+//	{
+//		$user = User::find($request->get('id'));
+//
+//		if ($user != null){
+//            $nota = $request->get('nota');
+//            $somaNota = $request->get('somaNota');
+//            $coute = $request->get('coute');
+//
+//            $user->calculateOverall($nota, $somaNota, $coute);
+//
+//            $user->save();
+//
+//            return 200;
+//        }else{
+//		    return 400;
+//        }
+//
+//	}
+//
+//	public function setGoalsScored(Request $request)
+//	{
+//		$user = User::find($request->get('id'));
+//
+//		$user->goalsScored = $request->get('goalsScored');
+//
+//		$user->save();
+//
+//		return 200;
+//	}
 
 	public function invitePlayers(Request $request)
 	{
@@ -256,20 +234,11 @@ class UserService
 
     public function returnUser(Request $request)
     {
-        $user = User::find($request->get('id'));
-
-        if ($user != null){
-            return json_encode($user);
-        }else{
-            return 404;
-        }
-
+        return User::where('email', $request->get('email'))->get()->first();
     }
 
 	public function allUsers()
 	{
-		$users = User::all();
-
-		return json_encode($users);
+		return User::all();
 	}
 }

@@ -25,17 +25,17 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 /*
  * Rotas de usuário...
  */
-Route::post('/loginApp', '\App\Http\Controllers\UserController@loginApp');
-Route::post('/isLogged', '\App\Http\Controllers\UserController@isLogged');
-Route::post('/logout', '\App\Http\Controllers\UserController@logout');
-Route::get('/allUsers', '\App\Http\Controllers\UserController@allUsers');
-Route::post('/returnUser', '\App\Http\Controllers\UserController@returnUser');
-Route::post('/createUser', '\App\Http\Controllers\UserController@create');
+Route::post('/loginApp', '\App\Http\Controllers\UserController@loginApp'); // ok
+Route::post('/isLogged', '\App\Http\Controllers\UserController@isLogged'); // ok
+Route::post('/logout', '\App\Http\Controllers\UserController@logout'); // ok
+Route::get('/allUsers', '\App\Http\Controllers\UserController@allUsers'); // ok
+Route::post('/returnUser', '\App\Http\Controllers\UserController@returnUser'); // ok
+Route::post('/createUser', '\App\Http\Controllers\UserController@create'); //
 Route::post('/updateUser', '\App\Http\Controllers\UserController@update');
 Route::post('/changePassword', '\App\Http\Controllers\UserController@changePassword');
 Route::post('/deleteUser', '\App\Http\Controllers\UserController@delete');
-Route::post('/setOverall', '\App\Http\Controllers\UserController@setOverall');
-Route::post('/setGoalsScored', '\App\Http\Controllers\UserController@setGoalsScored');
+//Route::post('/setOverall', '\App\Http\Controllers\UserController@setOverall');
+//Route::post('/setGoalsScored', '\App\Http\Controllers\UserController@setGoalsScored');
 Route::post('/invitePlayers', '\App\Http\Controllers\UserController@invitePlayers');
 Route::post('/addUserGroup', '\App\Http\Controllers\UserController@addUserGroup');
 Route::post('/makeFriends', '\App\Http\Controllers\UserController@makeFriends');

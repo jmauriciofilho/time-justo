@@ -37,12 +37,23 @@ class UserController extends Controller
 
     public function isLogged(Request $request)
     {
-    	return $this->userService->isLogged($request);
+        if($request->has('token_api')) {
+            $user = $this->userService->isLogged($request);
+    	    return $this->httpResponses->reponseSuccess(!empty($user));
+        }
+        return $this->httpResponses->errorParameters();
     }
 
     public function logout(Request $request)
     {
-    	return $this->userService->logoutApp($request);
+        if ($request->has('token_api')){
+    	    $isLogout = $this->userService->logoutApp($request);
+    	    if ($isLogout) {
+                return $this->httpResponses->success();
+            }
+            return $this->httpResponses->reponseSuccess('Token inválido!');
+        }
+        return $this->httpResponses->errorParameters();
     }
 
     public function create(UserRequest $request)
@@ -50,35 +61,61 @@ class UserController extends Controller
         try{
             $this->userService->create($request);
             return $this->httpResponses->success();
-        }catch (QueryException $exception){
+        }catch (QueryException $e){
             return $this->httpResponses->reponseError('Este e-mail já está cadastrado!');
         }
     }
 
     public function update(UserUpdateRequest $request)
     {
-    	return $this->userService->update($request);
+        $isUpdate = $this->userService->update($request);
+        if ($isUpdate){
+            return $this->httpResponses->success();
+        }else{
+            return $this->httpResponses->reponseError("Erro na atualização.");
+        }
     }
 
     public function changePassword(UserChangePasswordRequest $request)
     {
-    	return $this->userService->changePassword($request);
+        try{
+            $isChange = $this->userService->changePassword($request);
+            if ($isChange){
+                return $this->httpResponses->success();
+            }else{
+                return $this->httpResponses->reponseError("Erro na alteração da senha.");
+            }
+        }catch (\Exception $exception){
+            return $this->httpResponses->error();
+        }
+
     }
 
     public function delete(Request $request)
     {
-    	return $this->userService->delete($request);
+        if ($request->has('token_api')){
+            $isDelete = $this->userService->delete($request);
+
+            if ($isDelete){
+                return $this->httpResponses->success();
+            }else{
+                return $this->httpResponses->reponseError("Erro na requisição.");
+            }
+        }else{
+            return $this->httpResponses->errorParameters();
+        }
+
     }
 
-	public function setOverall(Request $request)
-	{
-		return $this->userService->setOverall($request);
-	}
-
-	public function setGoalsScored(Request $request)
-	{
-		return $this->userService->setGoalsScored($request);
-	}
+//	public function setOverall(Request $request)
+//	{
+//		return $this->userService->setOverall($request);
+//	}
+//
+//	public function setGoalsScored(Request $request)
+//	{
+//		return $this->userService->setGoalsScored($request);
+//	}
 
 	public function invitePlayers(Request $request)
 	{
@@ -112,11 +149,21 @@ class UserController extends Controller
 
     public function returnUser(Request $request)
     {
-        return $this->userService->returnUser($request);
+        if ($request->has('email')) {
+            $user = $this->userService->returnUser($request);
+            if (!empty($user)){
+                return $this->httpResponses->reponseSuccess($user);
+            }else{
+                return $this->httpResponses->reponseError('Usuário não encontrado.');
+            }
+        }
+        return $this->httpResponses->errorParameters();
     }
 
     public function allUsers()
     {
-    	return $this->userService->allUsers();
+    	$users = $this->userService->allUsers();
+
+    	return json_encode($users);
     }
 }

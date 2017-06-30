@@ -24,7 +24,7 @@ class UserChangePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-        	'id' => 'required|integer',
+        	'token_api' => 'required',
 	        'password' => 'required|alpha_num|min:6',
         ];
     }

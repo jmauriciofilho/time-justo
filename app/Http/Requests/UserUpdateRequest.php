@@ -24,7 +24,7 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-        	'id' => 'required|integer',
+        	'token_api' => 'required',
 	        'name' => 'required|max:255',
 	        'email' => 'required|email',
         ];

@@ -33,10 +33,10 @@ class User extends Authenticatable
 	    'remember_token'
     ];
 
-    public function calculateOverall($nota, $somaNotas, $couter)
-    {
-		$this->overall = ($nota + $somaNotas)/$couter;
-    }
+//    public function calculateOverall($nota, $somaNotas, $couter)
+//    {
+//		$this->overall = ($nota + $somaNotas)/$couter;
+//    }
 
     public function roles()
     {
