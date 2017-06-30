@@ -20,8 +20,6 @@ class User extends Authenticatable
 	    'password',
 	    'token_api',
 	    'media_id',
-	    'overall',
-	    'goalsScored',
 	    'appearances',
     ];
 

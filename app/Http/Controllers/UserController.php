@@ -5,21 +5,34 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserChangePasswordRequest;
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Http\Responses\HttpResponses;
 use App\Services\UserService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     private $userService;
+    private $httpResponses;
 
-    function __construct(UserService $userService)
+    function __construct(UserService $userService, HttpResponses $httpResponses)
     {
     	$this->userService = $userService;
+    	$this->httpResponses = $httpResponses;
     }
 
     public function loginApp(Request $request)
     {
-    	return $this->userService->loginApp($request);
+        if (!$request->has('email') || !$request->has('password')){
+            return $this->httpResponses->errorParameters();
+        }else{
+            $userLoggedIn = $this->userService->loginApp($request);
+            if (empty($userLoggedIn)){
+                return $this->httpResponses->userNotFound();
+            }else{
+                return $this->httpResponses->reponseSuccess($userLoggedIn);
+            }
+        }
     }
 
     public function isLogged(Request $request)
@@ -34,7 +47,12 @@ class UserController extends Controller
 
     public function create(UserRequest $request)
     {
-    	return $this->userService->create($request);
+        try{
+            $this->userService->create($request);
+            return $this->httpResponses->success();
+        }catch (QueryException $exception){
+            return $this->httpResponses->reponseError('Este e-mail já está cadastrado!');
+        }
     }
 
     public function update(UserUpdateRequest $request)

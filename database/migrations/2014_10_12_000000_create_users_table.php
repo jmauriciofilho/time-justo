@@ -25,8 +25,6 @@ class CreateUsersTable extends Migration
 	        $table->string('token_api')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->double('overall')->default(0.0);
-            $table->integer('goalsScored')->default(0);
             $table->string('appearances')->nullable();
             $table->timestamps();
         });

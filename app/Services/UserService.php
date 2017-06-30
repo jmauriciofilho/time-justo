@@ -9,14 +9,13 @@
 namespace App\Services;
 
 use App\Http\Controllers\MediaController;
+use App\Http\Responses\HttpResponses;
 use App\Models\Event;
 use App\Models\Group;
 use App\Models\Media;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -24,28 +23,29 @@ class UserService
 {
 	private $user;
 	private $media;
+    private $httpResponses;
 
-	function __construct(User $user, MediaController $media)
+	function __construct(User $user, MediaController $media, HttpResponses $httpResponses)
 	{
 		$this->user = $user;
 		$this->media = $media;
+		$this->httpResponses = $httpResponses;
 	}
 
 	public function loginApp(Request $request)
 	{
-		$has = Auth::attempt(['email' => $request->get('email'),
-			'password' => $request->get('password')]);
+        $has = Auth::attempt(['email' => $request->get('email'),
+            'password' => $request->get('password')]);
 
-		if ($has) {
+        if ($has) {
 
-			$token = str_random(16);
+            $token = str_random(16);
 
-			$user = User::all()->where('email', '=', $request->get('email'))->first();
-			$user->token_api = $token;
-			$user->save();
+            $user = User::all()->where('email', '=', $request->get('email'))->first();
+            $user->token_api = $token;
+            $user->save();
 
-			$userLoggedIn = [
-                'cod' => 200,
+            $userLoggedIn = [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
@@ -53,72 +53,62 @@ class UserService
                 'token_api' => $user->token_api
             ];
 
-			$json = new Collection();
-            $json->put('response', $userLoggedIn);
-			//dd($json);
-
-            return json_encode($json->toArray());
-		}else{
-            return 400;
+            return $userLoggedIn;
+        }else{
+            return null;
         }
+
 
 	}
 
 	public function isLogged(Request $request)
 	{
-	    try{
-            $user = User::find($request->get('id'));
-            if($request->get('token_api') == $user->token_api){
-                return 1;
-            }else{
-                return 0;
-            }
-        }catch (\ErrorException $e){
-            return 400;
+	    if($request->has('token_api')) {
+	        $user = User::where('token_api', $request->get('token_api'))->get()->first();
+            return $this->httpResponses->reponseSuccess(!empty($user));
         }
-
+        return $this->httpResponses->errorParameters();
 	}
 
 	public function logoutApp(Request $request)
 	{
-		$user = User::find($request->get('id'));
-		if ($user != null && $user->token_api != null){
-            $user->token_api = null;
-            $user->save();
-            return 200;
-        }else{
-		    return 400;
+	    if ($request->has('token_api')){
+            $user = User::where('token_api', $request->get('token_api'))->get()->first();
+            if (!empty($user)){
+                $user->token_api = null;
+                $user->save();
+                return $this->httpResponses->success();
+            }
+            return $this->httpResponses->reponseSuccess('Token invalido!');
         }
-
+        return $this->httpResponses->errorParameters();
 	}
 
 	public function create(Request $request)
 	{
-	    try{
-            DB::transaction(function() use ($request)
-            {
-                $role = Role::find(2);
-                $role_id = $role->id;
-                $request->merge(['password' => bcrypt($request->get("password"))]);
-                $user = $this->user->create($request->all());
-                $user->roles()->attach($role_id);
-            });
-            return 200;
-        }catch (QueryException $e){
-	        return 400;
-        }
-
+        DB::transaction(function() use ($request)
+        {
+            $role = Role::find(2);
+            $role_id = $role->id;
+            $request->merge(['password' => bcrypt($request->get("password"))]);
+            $user = $this->user->create($request->all());
+            $user->roles()->attach($role_id);
+        });
 	}
 
 	public function update(Request $request)
 	{
-		$update = $this->user->where('id', $request->get('id'))->update($request->all());
+	    DB::transaction(function () use ($request)
+        {
+            $update = $this->user->where('id', $request->get('id'))->update($request->all());
 
-		if ($update){
-            return 200;
-        }else{
-		    return 400;
-        }
+            if ($update){
+                return 200;
+            }else{
+                return 400;
+            }
+        });
+
 
 	}
 
