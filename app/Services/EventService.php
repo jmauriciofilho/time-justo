@@ -12,8 +12,10 @@ namespace App\Services;
 use App\Http\Controllers\MediaController;
 use App\Models\Event;
 use App\Models\Media;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class EventService
 {
@@ -28,32 +30,28 @@ class EventService
 
 	public function create(Request $request)
 	{
-		$createEvent = $this->event->create($request->all());
-
-		if ($createEvent){
-		    $response = [
-		        'cod' => 200,
-                'id_event' => $createEvent->id
-            ];
-
-		    $json = new Collection();
-		    $json->put('response', $response);
-
-			return json_encode($json);
-		}else{
-			return 400;
-		}
+        DB::beginTransaction();
+        $event = $this->event->create($request->all());
+        if (!empty($event)){
+            DB::commit();
+            return $event;
+        }else{
+            DB::rollBack();
+            throw new \ErrorException();
+        }
 	}
 
 	public function update(Request $request)
 	{
-		$updateEvent = $this->event->where('id', $request->get('id'))->update($request->all());
-
-		if ($updateEvent){
-			return 200;
-		}else{
-			return 400;
-		}
+        DB::beginTransaction();
+        $update = $this->event->where('id', $request->get('id'))
+            ->update($request->all());
+        if ($update){
+            DB::commit();
+        }else{
+            DB::rollBack();
+            throw new \ErrorException();
+        }
 	}
 
 	public function delete(Request $request)
@@ -132,9 +130,7 @@ class EventService
 
 	public function allEvents()
 	{
-		$event = Event::all();
-
-		return json_encode($event);
+		return Event::all();
 	}
 
 }

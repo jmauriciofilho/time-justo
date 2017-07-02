@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserChangePasswordRequest extends FormRequest
+class EventRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,13 @@ class UserChangePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-        	'token_api' => 'required',
-	        'password' => 'required|alpha_num|min:6',
+            'owner' => 'required|integer',
+            'type' => 'required|alpha',
+            'date' => 'required|date',
+            'minimumUsers' => 'required|integer',
+            'maximumUsers' => 'required|integer',
+            'valueToBePaid' => 'required|numeric',
+            'address' => 'required'
         ];
     }
 }

@@ -89,31 +89,46 @@ class UserService
 
 	public function update(Request $request)
 	{
-	    DB::transaction(function () use ($request)
-        {
-            $this->user->where('token_api', $request->get('token_api'))
-                ->update($request->all());
-        });
+        DB::beginTransaction();
+	    $update = $this->user->where('token_api', $request->get('token_api'))
+            ->update($request->all());
+	    if ($update){
+            DB::commit();
+        }else{
+            DB::rollBack();
+            throw new \ErrorException();
+        }
 	}
 
 	public function changePassword(Request $request)
 	{
-	    DB::transaction(function () use ($request){
-            $request->merge(['password' => bcrypt($request->get("password"))]);
-            $user = User::where('token_api', $request->get('token_api'))->get()->first();
+        DB::beginTransaction();
+	    $request->merge(['password' => bcrypt($request->get("password"))]);
+        $user = User::where('token_api', $request->get('token_api'))->get()->first();
 
-            if (!empty($user)) {
-                $user->password = $request->get('password');
-                $user->save();
+        if (!empty($user)) {
+            $user->password = $request->get('password');
+            if($user->save()){
+                DB::commit();
             }
-        });
+        }else{
+            DB::rollBack();
+            throw new \ErrorException();
+        }
 	}
 
 	public function delete(Request $request)
 	{
-	    DB::transaction(function () use ($request){
-            $this->user->where('token_api', $request->get('token_api'))->delete();
-        });
+        DB::beginTransaction();
+	    if ($this->validationTokenApi($request->get('token_api'))) {
+            $delete = $this->user->where('token_api', $request->get('token_api'))->delete();
+            if ($delete) {
+                DB::commit();
+            }
+        }else{
+            DB::rollBack();
+	        throw new \ErrorException();
+        }
 	}
 
 //	public function setOverall(Request $request)
@@ -179,37 +194,48 @@ class UserService
 
 	public function makeFriends(Request $request)
 	{
-		$user = User::find($request->get('user_id'));
-		$friend = User::find($request->get('user_friend_id'));
+		$user = User::where('token_api', $request->get('token_api'))->get()->first();
+		$friend = User::where('email', $request->get('email_friend'))->get()->first();
 
-		if ($user != null && $friend != null){
-            $user->users()->attach($friend);
-            return 200;
+		if (!empty($user) && !empty($friend)){
+            DB::transaction(function () use ($user, $friend)
+            {
+                $user->users()->attach($friend);
+            });
+            return true;
         }else{
-		    return 404;
+		    return false;
         }
 
 	}
 
 	public function removeFriends(Request $request)
     {
-        $friends = DB::table('friends')
-            ->where('user_id', $request->get('user_id'))
-            ->where('user_friend_id', $request->get('user_friend_id'))
-            ->delete();
+        $user = User::where('token_api', $request->get('token_api'))->get()->first();
+        $friend = User::where('email', $request->get('email_friend'))->get()->first();
 
-        if ($friends != null){
-            return 200;
+        if (!empty($user) && !empty($friend)){
+            DB::transaction(function () use ($user, $friend)
+            {
+                DB::table('friends')
+                    ->where('user_id', $user->id)
+                    ->where('user_friend_id', $friend->id)
+                    ->delete();
+            });
         }else{
-            return 404;
+            throw new \ErrorException();
         }
     }
 
 	public function myFriends(Request $request)
 	{
-		$user = User::find($request->get('id'));
+		$user = User::where('token_api', $request->get('token_api'))->get()->first();
 
-		return json_encode($user->users);
+		if (!empty($user)) {
+            return $user->users;
+        }else{
+		    throw new \ErrorException();
+        }
 	}
 
 	public function addAvatar(Request $request)
@@ -241,4 +267,10 @@ class UserService
 	{
 		return User::all();
 	}
+
+	private function validationTokenApi($token_api)
+    {
+        $user = User::where('token_api', $token_api)->get()->first();
+        return !empty($user);
+    }
 }

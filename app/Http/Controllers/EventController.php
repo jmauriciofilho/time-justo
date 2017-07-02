@@ -2,26 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EventRequest;
+use App\Http\Responses\HttpResponses;
 use App\Services\EventService;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
     private $eventService;
+    private $httResponses;
 
-    function __construct(EventService $eventService)
+    function __construct(EventService $eventService, HttpResponses $httpResponses)
     {
     	$this->eventService = $eventService;
+    	$this->httResponses = $httpResponses;
     }
 
-    public function create(Request $request)
+    public function create(EventRequest $request)
     {
-    	return $this->eventService->create($request);
+        try{
+            $event = $this->eventService->create($request);
+            $response = [
+                'id_event' => $event->id
+            ];
+            return $this->httResponses->reponseSuccess($response);
+        }catch (QueryException $e){
+            return $this->httResponses->reponseError("Parâmetro type incorreto");
+        }catch (\ErrorException $e){
+            return $this->httResponses->errorParameters();
+        }
     }
 
     public function update(Request $request)
     {
-    	return $this->eventService->update($request);
+        try{
+            if ($request->has('id')) {
+                $this->eventService->update($request);
+                return $this->httResponses->success();
+            }else{
+                return $this->httResponses->reponseError("Parâmetro id obrigatorio.");
+            }
+        }catch (QueryException $e){
+            return $this->httResponses->errorParameters();
+        }catch (\ErrorException $e){
+            return $this->httResponses->errorParameters();
+        }
+
     }
 
     public function delete(Request $request)
@@ -51,6 +78,7 @@ class EventController extends Controller
 
     public function allEvents()
     {
-    	return $this->eventService->allEvents();
+    	$events = $this->eventService->allEvents();
+    	return $this->httResponses->reponseSuccess($events);
     }
 }

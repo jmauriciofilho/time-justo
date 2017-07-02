@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserChangePasswordRequest;
 use App\Http\Requests\UserRequest;
-use App\Http\Requests\UserUpdateRequest;
 use App\Http\Responses\HttpResponses;
 use App\Services\UserService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -66,45 +65,55 @@ class UserController extends Controller
         }
     }
 
-    public function update(UserUpdateRequest $request)
+    public function update(Request $request)
     {
-        $isUpdate = $this->userService->update($request);
-        if ($isUpdate){
-            return $this->httpResponses->success();
-        }else{
-            return $this->httpResponses->reponseError("Erro na atualização.");
+        try{
+            if ($request->has('token_api')){
+                if ($request->has('email')) {
+                    $validator = Validator::make($request->all(), [
+                        'email' => 'email'
+                    ]);
+                    if ($validator->fails()){
+                        return $this->httpResponses->reponseError("Formato do email incorreto");
+                    }
+                }
+                $this->userService->update($request);
+                return $this->httpResponses->success();
+            }else{
+                return $this->httpResponses->errorParameters();
+            }
+        }catch (\ErrorException $e){
+            return $this->httpResponses->reponseError("Token inválido");
         }
     }
 
-    public function changePassword(UserChangePasswordRequest $request)
+    public function changePassword(Request $request)
     {
         try{
-            $isChange = $this->userService->changePassword($request);
-            if ($isChange){
+            if ($request->has('token_api') && $request->has('password')){
+                $this->userService->changePassword($request);
                 return $this->httpResponses->success();
             }else{
-                return $this->httpResponses->reponseError("Erro na alteração da senha.");
+                return $this->httpResponses->errorParameters();
             }
-        }catch (\Exception $exception){
-            return $this->httpResponses->error();
+        }catch (\ErrorException $e){
+            return $this->httpResponses->reponseError("Token inválido");
         }
 
     }
 
     public function delete(Request $request)
     {
-        if ($request->has('token_api')){
-            $isDelete = $this->userService->delete($request);
-
-            if ($isDelete){
+        try{
+            if ($request->has('token_api')){
+                $this->userService->delete($request);
                 return $this->httpResponses->success();
             }else{
-                return $this->httpResponses->reponseError("Erro na requisição.");
+                return $this->httpResponses->errorParameters();
             }
-        }else{
-            return $this->httpResponses->errorParameters();
+        }catch (\ErrorException $e){
+            return $this->httpResponses->reponseError("Token inválido");
         }
-
     }
 
 //	public function setOverall(Request $request)
@@ -129,17 +138,44 @@ class UserController extends Controller
 
 	public function makeFriends(Request $request)
 	{
-		return $this->userService->makeFriends($request);
+	    if ($request->has('token_api') && $request->has('email_friend')) {
+            $friend = $this->userService->makeFriends($request);
+            if ($friend) {
+                return $this->httpResponses->success();
+            }else{
+                return $this->httpResponses->reponseError("Os dados cadastrados não conferem com os fornecidos.");
+            }
+        }else{
+            return $this->httpResponses->errorParameters();
+        }
 	}
 
 	public function removeFriends(Request $request)
     {
-        return $this->userService->removeFriends($request);
+        try{
+            if ($request->has('token_api') && $request->has('email_friend')){
+                $this->userService->removeFriends($request);
+                return $this->httpResponses->success();
+            }else{
+                return $this->httpResponses->errorParameters();
+            }
+        }catch (\ErrorException $e){
+            return $this->httpResponses->reponseError("Informação não encontrada.");
+        }
     }
 
 	public function myFriends(Request $request)
 	{
-		return $this->userService->myFriends($request);
+	    try{
+            if ($request->has('token_api')){
+                $friends = $this->userService->myFriends($request);
+                return $this->httpResponses->reponseSuccess($friends);
+            }else{
+                return $this->httpResponses->errorParameters();
+            }
+        }catch (\ErrorException $exception) {
+            return $this->httpResponses->reponseError("Informação não encontrada.");
+        }
 	}
 
 	public function addAvatar(Request $request)
