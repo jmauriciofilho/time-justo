@@ -53,12 +53,33 @@ class EventController extends Controller
 
     public function delete(Request $request)
     {
-    	return $this->eventService->delete($request);
+        try{
+            if ($request->has('id')) {
+                $this->eventService->delete($request);
+                return $this->httResponses->success();
+            }else{
+                return $this->httResponses->errorParameters();
+            }
+        }catch (\ErrorException $e){
+            return $this->httResponses->reponseError("Id inválido.");
+        }
+
     }
 
 	public function setIsConfirmation(Request $request)
 	{
-		return $this->eventService->setIsConfirmation($request);
+	    try{
+            if ($request->has('event_id')){
+                $this->eventService->setIsConfirmation($request);
+                return $this->httResponses->success();
+            }else{
+                return $this->httResponses->errorParameters();
+            }
+        }catch (\ErrorException $e){
+            return $this->httResponses->reponseError("Erro ao alterar confirmação do evento");
+        }catch (\Exception $e){
+            return $this->httResponses->reponseError("Evento não existe.");
+        }
 	}
 
 	public function addEventImage(Request $request)

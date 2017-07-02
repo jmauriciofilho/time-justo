@@ -127,8 +127,19 @@ class UserController extends Controller
 //	}
 
 	public function invitePlayers(Request $request)
-	{
-		return $this->userService->invitePlayers($request);
+    {
+        try {
+            if ($request->has('user_id') && $request->has('event_id')) {
+                $this->userService->invitePlayers($request);
+                return $this->httpResponses->success();
+            } else {
+                return $this->httpResponses->errorParameters();
+            }
+        }catch (QueryException $e){
+            return $this->httpResponses->reponseError("Convite já realizado.");
+        }catch (\ErrorException $e){
+	        return $this->httpResponses->reponseError("Id's inválidos.");
+        }
 	}
 
 	public function addUserGroup(Request $request)
@@ -138,16 +149,19 @@ class UserController extends Controller
 
 	public function makeFriends(Request $request)
 	{
-	    if ($request->has('token_api') && $request->has('email_friend')) {
-            $friend = $this->userService->makeFriends($request);
-            if ($friend) {
+	    try{
+            if ($request->has('token_api') && $request->has('email_friend')) {
+                $this->userService->makeFriends($request);
                 return $this->httpResponses->success();
             }else{
-                return $this->httpResponses->reponseError("Os dados cadastrados não conferem com os fornecidos.");
+                return $this->httpResponses->errorParameters();
             }
-        }else{
-            return $this->httpResponses->errorParameters();
+        }catch (QueryException $e){
+	        return $this->httpResponses->reponseError("Amizade já estabelecida.");
+        }catch (\ErrorException $e){
+            return $this->httpResponses->reponseError("Informações inválidos.");
         }
+
 	}
 
 	public function removeFriends(Request $request)

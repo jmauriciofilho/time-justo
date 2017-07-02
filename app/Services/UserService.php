@@ -15,6 +15,7 @@ use App\Models\Group;
 use App\Models\Media;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -164,16 +165,16 @@ class UserService
 
 	public function invitePlayers(Request $request)
 	{
-		$users = $request->get('user_id');
-
-        $user = User::find($users);
+        $user = User::find($request->get('user_id'));
 		$event = Event::find($request->get('event_id'));
 
-		if ($user != null && $event != null){
-            $event->users()->attach($users);
-            return 200;
+		if (!empty($user) && !empty($event)){
+            DB::transaction(function () use ($event, $user)
+            {
+                $event->users()->attach($user);
+            });
         }else{
-		    return 404;
+            throw new \ErrorException();
         }
 
 	}
@@ -202,9 +203,8 @@ class UserService
             {
                 $user->users()->attach($friend);
             });
-            return true;
         }else{
-		    return false;
+		    throw new \ErrorException();
         }
 
 	}

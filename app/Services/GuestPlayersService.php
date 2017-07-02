@@ -10,7 +10,10 @@ namespace App\Services;
 
 
 use App\Models\GuestPlayers;
+use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GuestPlayersService
 {
@@ -23,14 +26,26 @@ class GuestPlayersService
 
 	public function setConfirmParticipation(Request $request)
 	{
-		$guestPlayers = $this->guestPlayers
-            ->where('user_id', '=', $request->get('user_id'))->first();
-
-		$guestPlayers->confirmParticipation = $request->get('confirmParticipation');
-
-		$guestPlayers->save();
-
-		return 200;
+        DB::beginTransaction();
+	    $user = User::where('token_api', $request->get('token_api'))->get()->first();
+	    if (!empty($user)){
+            $guestPlayers = $this->guestPlayers->where('event_id', $request->get('event_id'))
+                ->where('user_id', $user->id)->first();
+            if (!empty($guestPlayers)){
+                $guestPlayers->confirmParticipation = $request->get('confirmParticipation');
+                if($guestPlayers->save()){
+                    DB::commit();
+                }else{
+                    DB::rollBack();
+                }
+            }else{
+                DB::rollBack();
+                throw new \Exception();
+            }
+        }else{
+            DB::rollBack();
+            throw new \ErrorException();
+        }
 	}
 
 }

@@ -56,32 +56,40 @@ class EventService
 
 	public function delete(Request $request)
 	{
+        DB::beginTransaction();
 		$deleteEvent = $this->event->where('id', $request->get('id'))->delete();
 
 		if ($deleteEvent){
-			return 200;
+            DB::commit();
 		}else{
-			return 400;
+            DB::rollBack();
+            throw new \ErrorException();
 		}
 	}
 
 	public function setIsConfirmation(Request $request)
 	{
-		$event = $this->event->where('id', $request->get('id'))->first();
+        DB::beginTransaction();
+		$event = $this->event->where('id', $request->get('event_id'))->first();
+		if (!empty($event)){
+            $numberUserConfirmed = count($event->users()->where('confirmParticipation', '=', true)->get());
 
-		$numberUserConfirmed = count($event->users()->where('confirmParticipation', '=', true)->get());
+            //dd($numberUserConfirmed);
 
-		//dd($numberUserConfirmed);
+            $confirmed = $event->minimumUsers <= $numberUserConfirmed;
+            $event->isEventConfirmed = $confirmed;
+            if($event->save()){
+                DB::commit();
+                return $event->isEventConfirmed;
+            }else{
+                DB::rollBack();
+                throw new \ErrorException();
+            }
+        }else{
+            DB::rollBack();
+            throw new \Exception();
+        }
 
-		if ($event->minimumUsers <= $numberUserConfirmed){
-            $event->isEventConfirmed = true;
-            $event->save();
-			return 1;
-		} else {
-            $event->isEventConfirmed = false;
-            $event->save();
-			return 0;
-		}
 	}
 
 	public function addEventImage(Request $request)
