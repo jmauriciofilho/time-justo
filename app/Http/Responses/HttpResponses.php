@@ -8,7 +8,6 @@
 
 namespace App\Http\Responses;
 
-use Illuminate\Support\Collection;
 
 class HttpResponses
 {
@@ -23,7 +22,7 @@ class HttpResponses
     public function success()
     {
         $response = [
-            'cod:' => $this->cod200,
+            'code' => $this->cod200,
             'message' => $this->message200
         ];
 
@@ -33,7 +32,7 @@ class HttpResponses
     public function reponseSuccess($answer)
     {
         $response = [
-            'cod:' => $this->cod200,
+            'code' => $this->cod200,
             'message' => $this->message200,
             'result' => $answer
         ];
@@ -44,7 +43,7 @@ class HttpResponses
     public function error()
     {
         $response = [
-            'cod:' => $this->cod500,
+            'code' => $this->cod500,
             'message' => $this->message500,
         ];
 
@@ -54,7 +53,7 @@ class HttpResponses
     public function reponseError($answer)
     {
         $response = [
-            'cod:' => $this->cod400,
+            'code' => $this->cod400,
             'message' => $answer,
         ];
 
@@ -64,7 +63,7 @@ class HttpResponses
     public function errorParameters()
     {
         $response = [
-            'cod:' => $this->cod400,
+            'code' => $this->cod400,
             'message' => $this->message400
         ];
 
@@ -74,7 +73,7 @@ class HttpResponses
     public function userNotFound()
     {
         $response = [
-            'cod' => $this->cod400,
+            'code' => $this->cod400,
             'message' => 'Usuário Não encontrado.'
         ];
 
