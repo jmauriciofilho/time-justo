@@ -89,12 +89,30 @@ class EventController extends Controller
 
     public function returnEvent(Request $request)
     {
-        return $this->eventService->returnEvent($request);
+        try {
+            if ($request->has('id')) {
+                $event = $this->eventService->returnEvent($request);
+                return $this->httResponses->reponseSuccess($event);
+            } else {
+                return $this->httResponses->errorParameters();
+            }
+        }catch (\ErrorException $e){
+            return $this->httResponses->reponseError("Evento não existe");
+        }
     }
 
 	public function eventAttendance(Request $request)
 	{
-		return $this->eventService->eventAttendance($request);
+	    try {
+            if ($request->has('id')) {
+                $eventAttendance = $this->eventService->eventAttendance($request);
+                return $this->httResponses->reponseSuccess($eventAttendance);
+            } else {
+                return $this->httResponses->errorParameters();
+            }
+        }catch (\ErrorException $e){
+	        return $this->httResponses->reponseError("Evento não existe.");
+        }
 	}
 
     public function allEvents()

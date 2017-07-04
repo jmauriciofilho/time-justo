@@ -52,8 +52,8 @@ Route::post('/createEvent', '\App\Http\Controllers\EventController@create'); //
 Route::post('/updateEvent', '\App\Http\Controllers\EventController@update'); // ok
 Route::post('/deleteEvent', '\App\Http\Controllers\EventController@delete'); // ok
 Route::post('/setEventIsConfirmation', '\App\Http\Controllers\EventController@setIsConfirmation'); // ok
-Route::post('/eventAttendance', '\App\Http\Controllers\EventController@eventAttendance');
-Route::post('/returnEvent', '\App\Http\Controllers\EventController@returnEvent');
+Route::post('/eventAttendance', '\App\Http\Controllers\EventController@eventAttendance'); // ok
+Route::post('/returnEvent', '\App\Http\Controllers\EventController@returnEvent'); // ok
 Route::post('/addEventImage', '\App\Http\Controllers\EventController@addEventImage');
 
 /*

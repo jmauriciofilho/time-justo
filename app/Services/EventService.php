@@ -115,25 +115,31 @@ class EventService
     public function returnEvent(Request $request)
     {
         $event = Event::find($request->get('id'));
+        if (!empty($event)) {
+            //dd($event->users()->where('confirmParticipation', '=', true)->get());
+            $confirmed = $event->users()->where('confirmParticipation', '=', true)->get();
 
-        //dd($event->users()->where('confirmParticipation', '=', true)->get());
-        $confirmed = $event->users()->where('confirmParticipation', '=', true)->get();
+            $e = new Collection();
+            $e->put('event', $event->toArray());
+            $e->put('invites', $event->users->toArray());
+            $e->put('confirmed', $confirmed->toArray());
 
-        $json = new Collection();
-        $json->put('event', $event->toArray());
-        $json->put('invites', $event->users->toArray());
-        $json->put('confirmed', $confirmed->toArray());
+            //dd($json->toArray());
 
-        //dd($json->toArray());
-
-        return json_encode($json->toArray());
+            return $e->toArray();
+        }else{
+            throw new \ErrorException();
+        }
     }
 
 	public function eventAttendance(Request $request)
 	{
 		$event = $this->event->where('id', $request->get('id'))->first();
-
-		return json_encode($event->users);
+        if (!empty($event)){
+            return $event->users;
+        }else{
+            throw new \ErrorException();
+        }
 	}
 
 	public function allEvents()
