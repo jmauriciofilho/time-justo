@@ -16,6 +16,8 @@ class CreateEventsTable extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->increments('id');
 
+            $table->string('name');
+
             $table->integer('media_id')->unsigned()->nullable();
             $table->foreign('media_id')->references('id')->on('medias')
                 ->onDelete('set null');

@@ -12,6 +12,7 @@ class Event extends Model
 	const FUTSAL = 'futsal';
 
     protected $fillable = [
+        'name',
         'owner',
     	'type',
     	'date',
