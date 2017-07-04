@@ -25,7 +25,7 @@ class EventRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'owner' => 'required|integer',
+            'owner' => 'required|integer|exists:users,id',
             'type' => 'required|alpha',
             'date' => 'required|date',
             'minimumUsers' => 'required|integer',
