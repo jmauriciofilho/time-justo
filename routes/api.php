@@ -60,8 +60,8 @@ Route::post('/addEventImage', '\App\Http\Controllers\EventController@addEventIma
  * Rotas de grupos...
  */
 Route::get('/allGroups', '\App\Http\Controllers\GroupController@allGroups');
-Route::post('/createGroup', '\App\Http\Controllers\GroupController@create');
-Route::post('/updateGroup', '\App\Http\Controllers\GroupController@update');
+Route::post('/createGroup', '\App\Http\Controllers\GroupController@create'); // ok
+Route::post('/updateGroup', '\App\Http\Controllers\GroupController@update'); // ok
 Route::post('/deleteGroup', '\App\Http\Controllers\GroupController@delete');
 
 /*

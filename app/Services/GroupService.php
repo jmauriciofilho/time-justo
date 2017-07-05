@@ -32,13 +32,14 @@ class GroupService
 
 	public function update(Request $request)
 	{
-		$isUpdate = $this->group->where('id', $request->get('id'))->update($request->all());
-
-		if ($isUpdate){
-			return 200;
-		} else{
-			return 400;
-		}
+        $group = Group::find($request->get('id'));
+        if (!empty($group)){
+            DB::transaction(function () use ($request) {
+                $this->group->where('id', $request->get('id'))->update($request->all());
+            });
+        }else{
+            throw new \Exception();
+        }
 	}
 
 	public function delete(Request $request)
