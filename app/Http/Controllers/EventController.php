@@ -117,7 +117,7 @@ class EventController extends Controller
 
     public function allEvents()
     {
-    	$events = $this->eventService->allEvents();
-    	return $this->httResponses->reponseSuccess($events);
+    	$allEvents = $this->eventService->allEvents();
+    	return $this->httResponses->reponseSuccess($allEvents);
     }
 }
