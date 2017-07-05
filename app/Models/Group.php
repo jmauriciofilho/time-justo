@@ -10,6 +10,7 @@ class Group extends Model
 	const PUBLICO = 'público';
 
     protected $fillable = [
+        'name',
     	'owner',
 	    'type',
 	    'quantUsers'

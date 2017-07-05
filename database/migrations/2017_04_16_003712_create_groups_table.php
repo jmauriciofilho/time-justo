@@ -16,11 +16,13 @@ class CreateGroupsTable extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->increments('id');
 
+            $table->string('name');
+
             $table->integer('owner')->unsigned();
             $table->foreign('owner')->references('id')->on('users')
 	            ->onDelete('cascade');
 
-            $table->enum('type', ['privado', 'publico']);
+            $table->enum('type', ['privado', 'público']);
 	        $table->integer('quantUsers')->default(0);
             $table->timestamps();
         });

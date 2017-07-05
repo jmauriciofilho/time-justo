@@ -10,7 +10,9 @@ namespace App\Services;
 
 
 use App\Models\Group;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GroupService
 {
@@ -23,13 +25,9 @@ class GroupService
 
 	public function create(Request $request)
 	{
-		$isCreate = $this->group->create($request->all());
-
-		if ($isCreate){
-			return 200;
-		} else {
-			return 400;
-		}
+	    DB::transaction(function() use ($request) {
+            $this->group->create($request->all());
+        });
 	}
 
 	public function update(Request $request)
