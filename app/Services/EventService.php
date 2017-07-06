@@ -144,15 +144,14 @@ class EventService
 
 	public function allEvents()
 	{
-	    $allEvents = new \ArrayObject();
+	    $allEvents = [];
 		$events = Event::all();
 		foreach ($events as $event){
             $confirmed = $event->users()->where('confirmParticipation', '=', true)->get();
-            $e = new Collection();
-            $e->put('event', $event->toArray());
-            $e->put('invites', $event->users->toArray());
-            $e->put('confirmed', $confirmed->toArray());
-            $allEvents->append($e);
+            $e['event'] = $event->toArray();
+            $e['invites'] = $event->users->toArray();
+            $e['confirmed'] =  $confirmed->toArray();
+            $allEvents[] = $e;
         }
 
         return $allEvents;
