@@ -8,6 +8,7 @@ use App\Services\UserService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 class UserController extends Controller
 {
@@ -144,7 +145,18 @@ class UserController extends Controller
 
 	public function addUserGroup(Request $request)
 	{
-		return $this->userService->addUserGroup($request);
+	    try{
+            if ($request->has('group_id') && $request->has('id_user')) {
+                $this->userService->addUserGroup($request);
+                return $this->httpResponses->success();
+            }else{
+                return $this->httpResponses->errorParameters();
+            }
+        }catch (QueryException $e){
+	        return $this->httpResponses->reponseError("Usuário não existe ou usuário já adicionado ao grupo.");
+        }catch (\ErrorException $e){
+            return $this->httpResponses->reponseError("Grupo não existe.");
+        }
 	}
 
 	public function makeFriends(Request $request)

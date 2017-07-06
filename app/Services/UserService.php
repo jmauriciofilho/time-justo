@@ -19,6 +19,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Debug\Exception\FatalThrowableError;
 
 class UserService
 {
@@ -181,16 +182,17 @@ class UserService
 
 	public function addUserGroup(Request $request)
 	{
-		$users = $request->get('user_id');
+        $group = Group::find($request->get('group_id'));
+        if (!empty($group)){
+            DB::transaction(function () use ($request, $group){
+                $group->users()->attach($request->get('id_user'));
+                $group->quantUsers = $group->quantUsers + 1;
+                $group->save();
+            });
+        }else{
+            throw new \ErrorException();
+        }
 
-		$group = Group::find($request->get('group_id'));
-
-		$group->quantUsers = $group->quantUsers + count($users);
-		$group->save();
-
-		$group->users()->attach($users);
-
-		return 200;
 	}
 
 	public function makeFriends(Request $request)

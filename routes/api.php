@@ -37,7 +37,7 @@ Route::post('/deleteUser', '\App\Http\Controllers\UserController@delete'); // ok
 //Route::post('/setOverall', '\App\Http\Controllers\UserController@setOverall');
 //Route::post('/setGoalsScored', '\App\Http\Controllers\UserController@setGoalsScored');
 Route::post('/invitePlayers', '\App\Http\Controllers\UserController@invitePlayers'); // ok
-Route::post('/addUserGroup', '\App\Http\Controllers\UserController@addUserGroup');
+Route::post('/addUserGroup', '\App\Http\Controllers\UserController@addUserGroup'); // ok
 Route::post('/makeFriends', '\App\Http\Controllers\UserController@makeFriends'); // ok
 Route::post('/removeFriends', '\App\Http\Controllers\UserController@removeFriends'); // ok
 Route::post('/myFriends', '\App\Http\Controllers\UserController@myFriends'); // ok
