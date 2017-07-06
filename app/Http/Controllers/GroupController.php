@@ -51,11 +51,35 @@ class GroupController extends Controller
 
 	public function delete(Request $request)
 	{
-		return $this->groupService->delete($request);
+	    try{
+            if($request->has('id')) {
+                $this->groupService->delete($request);
+                return $this->httpResponses->success();
+            }else{
+                return $this->httpResponses->errorParameters();
+            }
+        }catch (\ErrorException $e){
+	        return $this->httpResponses->reponseError("Grupo não existe.");
+        }
 	}
+
+	public function returnGroup(Request $request)
+    {
+        try{
+            if ($request->has('id')){
+                $group = $this->groupService->returnGroup($request);
+                return $this->httpResponses->reponseSuccess($group);
+            }else{
+                return $this->httpResponses->errorParameters();
+            }
+        }catch (\ErrorException $e){
+            return $this->httpResponses->reponseError("Grupo não existe.");
+        }
+    }
 
 	public function allGroups()
 	{
-		return $this->groupService->allGroups();
+		$groups = $this->groupService->allGroups();
+		return $this->httpResponses->reponseSuccess($groups);
 	}
 }

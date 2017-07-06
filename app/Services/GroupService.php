@@ -44,19 +44,32 @@ class GroupService
 
 	public function delete(Request $request)
 	{
-		$isDelete = $this->group->where('id', $request->get('id'))->delete();
-
-		if ($isDelete){
-			return 200;
-		}else{
-			return 400;
-		}
+	    $group = Group::find($request->get('id'));
+	    if (!empty($group)) {
+            DB::transaction(function () use ($request) {
+                $this->group->where('id', $request->get('id'))->delete();
+            });
+        }else{
+	        throw new \ErrorException();
+        }
 	}
+
+	public function returnGroup(Request $request)
+    {
+        $response = [];
+        $group = Group::find($request->get('id'));
+        if (!empty($group)){
+            $res['group'] = $group->toArray();
+            $res['members'] = $group->users->toArray();
+            $response[] = $res;
+            return $response;
+        }else{
+            throw new \ErrorException();
+        }
+    }
 
 	public function allGroups()
 	{
-		$groups = Group::all();
-
-		return json_encode($groups);
+		return Group::all();
 	}
 }
