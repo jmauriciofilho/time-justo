@@ -42,7 +42,7 @@ Route::post('/makeFriends', '\App\Http\Controllers\UserController@makeFriends');
 Route::post('/removeFriends', '\App\Http\Controllers\UserController@removeFriends'); // ok
 Route::post('/myFriends', '\App\Http\Controllers\UserController@myFriends'); // ok
 Route::post('/setConfirmParticipation', '\App\Http\Controllers\GuestPlayersController@setConfirmParticipation'); // ok
-Route::post('/addAvatar', '\App\Http\Controllers\UserController@addAvatar');
+Route::post('/addAvatar', '\App\Http\Controllers\UserController@addAvatar'); 
 
 /*
  * Rotas de eventos...
