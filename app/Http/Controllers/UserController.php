@@ -206,7 +206,16 @@ class UserController extends Controller
 
 	public function addAvatar(Request $request)
     {
-        return $this->userService->addAvatar($request);
+        try{
+            if ($request->has('token_api') && $request->hasFile('image')) {
+                $this->userService->addAvatar($request);
+                return $this->httpResponses->success();
+            }else{
+                return $this->httpResponses->errorParameters();
+            }
+        }catch (\ErrorException $e){
+            return $this->httpResponses->reponseError("Token inválido.");
+        }
     }
 
     public function returnUser(Request $request)

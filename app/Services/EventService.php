@@ -96,20 +96,25 @@ class EventService
     {
         $file = $request->file('image');
         $event = Event::find($request->get('idEvent'));
-        if ($event->media_id != null){
-            $id = Media::find($event->media_id);
-            $this->media->deleteMedia($id);
-            $avatar = $this->media->uploadMedia($file);
-            $event->media_id = $avatar->id;
-            $event->save();
-            return 200;
+        if (!empty($event)){
+            if ($event->media_id != null){
+                DB::transaction(function () use ($event, $file) {
+                    $id = Media::find($event->media_id);
+                    $this->media->deleteMedia($id);
+                    $avatar = $this->media->uploadMedia($file);
+                    $event->media_id = $avatar->id;
+                    $event->save();
+                });
+            }else{
+                DB::transaction(function () use ($event, $file) {
+                    $avatar = $this->media->uploadMedia($file);
+                    $event->media_id = $avatar->id;
+                    $event->save();
+                });
+            }
         }else{
-            $avatar = $this->media->uploadMedia($file);
-            $event->media_id = $avatar->id;
-            $event->save();
-            return 200;
+            throw new \ErrorException();
         }
-
     }
 
     public function returnEvent(Request $request)

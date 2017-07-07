@@ -243,19 +243,26 @@ class UserService
 	public function addAvatar(Request $request)
     {
         $file = $request->file('image');
-        $user = User::find($request->get('idUser'));
-        if ($user->media_id != null){
-            $id = Media::find($user->media_id);
-            $this->media->deleteMedia($id);
-            $avatar = $this->media->uploadMedia($file);
-            $user->media_id = $avatar->id;
-            $user->save();
-            return 200;
+        $user = User::where('token_api', $request->get('token_api'))->get()->first();
+        if(!empty($user)){
+            if ($user->media_id != null){
+                DB::transaction(function () use ($user, $file) {
+                    $id = Media::find($user->media_id);
+                    $this->media->deleteMedia($id);
+                    $avatar = $this->media->uploadMedia($file);
+                    $user->media_id = $avatar->id;
+                    $user->save();
+                });
+
+            }else{
+                DB::transaction(function () use ($user, $file) {
+                    $avatar = $this->media->uploadMedia($file);
+                    $user->media_id = $avatar->id;
+                    $user->save();
+                });
+            }
         }else{
-            $avatar = $this->media->uploadMedia($file);
-            $user->media_id = $avatar->id;
-            $user->save();
-            return 200;
+            throw new \ErrorException();
         }
 
     }

@@ -42,7 +42,7 @@ Route::post('/makeFriends', '\App\Http\Controllers\UserController@makeFriends');
 Route::post('/removeFriends', '\App\Http\Controllers\UserController@removeFriends'); // ok
 Route::post('/myFriends', '\App\Http\Controllers\UserController@myFriends'); // ok
 Route::post('/setConfirmParticipation', '\App\Http\Controllers\GuestPlayersController@setConfirmParticipation'); // ok
-Route::post('/addAvatar', '\App\Http\Controllers\UserController@addAvatar');
+Route::post('/addAvatar', '\App\Http\Controllers\UserController@addAvatar'); // ok
 
 /*
  * Rotas de eventos...
@@ -54,7 +54,7 @@ Route::post('/deleteEvent', '\App\Http\Controllers\EventController@delete'); // 
 Route::post('/setEventIsConfirmation', '\App\Http\Controllers\EventController@setIsConfirmation'); // ok
 Route::post('/eventAttendance', '\App\Http\Controllers\EventController@eventAttendance'); // ok
 Route::post('/returnEvent', '\App\Http\Controllers\EventController@returnEvent'); // ok
-Route::post('/addEventImage', '\App\Http\Controllers\EventController@addEventImage');
+Route::post('/addEventImage', '\App\Http\Controllers\EventController@addEventImage'); // ok
 
 /*
  * Rotas de grupos...
@@ -68,5 +68,5 @@ Route::post('/deleteGroup', '\App\Http\Controllers\GroupController@delete'); // 
 /*
  * Rotas de media...
  */
-Route::post('/upload-media', '\App\Http\Controllers\MediaController@uploadMedia');
-Route::post('/delete-media', '\App\Http\Controllers\MediaController@deleteMedia');
+//Route::post('/upload-media', '\App\Http\Controllers\MediaController@uploadMedia');
+//Route::post('/delete-media', '\App\Http\Controllers\MediaController@deleteMedia');

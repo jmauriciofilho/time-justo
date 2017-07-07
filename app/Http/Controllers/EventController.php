@@ -84,7 +84,17 @@ class EventController extends Controller
 
 	public function addEventImage(Request $request)
     {
-        return $this->eventService->addEventImage($request);
+        try{
+            if ($request->has('idEvent') && $request->hasFile('image')) {
+                $this->eventService->addEventImage($request);
+                return $this->httResponses->success();
+            }else{
+                return $this->httResponses->errorParameters();
+            }
+        }catch (\ErrorException $e){
+            return $this->httResponses->reponseError("Evento não existe.");
+        }
+
     }
 
     public function returnEvent(Request $request)
